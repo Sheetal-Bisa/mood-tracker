@@ -18,10 +18,17 @@ class ChatResponse(BaseModel):
 
 @router.post("/", response_model=ChatResponse)
 async def chat(req: ChatRequest):
-    last_message = req.messages[-1].content
+    # Convert messages to the format expected by OpenAI
+    # Filter out any system messages from the frontend and use only user/assistant messages
+    conversation_history = [
+        {"role": msg.role, "content": msg.content}
+        for msg in req.messages
+        if msg.role in ["user", "assistant"]
+    ]
+
     # Obtain client lazily at request time. This prevents import-time
     # failures when OPENAI_API_KEY is not set. The app's startup handler
     # already calls get_client() to initialize the client early.
     client = get_client()
-    reply = client.generate_response(last_message)
+    reply = client.generate_response(conversation_history)
     return ChatResponse(reply=reply)
