@@ -22,5 +22,6 @@ async def settings_page(request: Request):
 	return templates.TemplateResponse("settings.html", {"request": request})
 
 
-
-
+@router.get("/wellness_nudges", response_class=HTMLResponse)
+async def wellness_nudges(request: Request):
+	return templates.TemplateResponse("wellness_nudges.html", {"request": request})

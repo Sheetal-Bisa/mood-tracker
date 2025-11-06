@@ -1,44 +1,94 @@
 {% extends "base.html" %}
 {% block content %}
-	<h1>Chat</h1>
-	<div id="chatbox" class="chatbox"></div>
-	<form id="chat-form" class="chat-form">
-		<input id="chat-input" type="text" placeholder="Type your message..." required />
-		<button type="submit">Send</button>
-	</form>
-	<script>
-		const chatbox = document.getElementById('chatbox');
-		const form = document.getElementById('chat-form');
-		const input = document.getElementById('chat-input');
+  <h1>Chat</h1>
 
-		function addMessage(role, text) {
-			const div = document.createElement('div');
-			div.className = 'msg ' + role;
-			div.textContent = text;
-			chatbox.appendChild(div);
-			chatbox.scrollTop = chatbox.scrollHeight;
-		}
+  <div id="chatbox" class="chatbox"></div>
 
-		form.addEventListener('submit', async (e) => {
-			e.preventDefault();
-			const text = input.value.trim();
-			if (!text) return;
-			addMessage('user', text);
-			input.value = '';
-			try {
-				const res = await fetch('/api/chat', {
-					method: 'POST',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify({ messages: [{ role: 'user', content: text }] })
-				});
-				const data = await res.json();
-				addMessage('assistant', data.reply || '(no reply)');
-			} catch (err) {
-				addMessage('assistant', 'Error: ' + err);
-			}
-		});
-	</script>
+  <form id="chat-form" class="chat-form">
+    <input id="chat-input" type="text" placeholder="Type your message..." required />
+    <button type="submit">Send</button>
+  </form>
+
+  <!-- 🐶 Animated Mascot: Peeking Dog -->
+  <div class="mascot mascot-right">
+    <lottie-player
+      src="/static/images/peeking_dog.json"
+      background="transparent"
+      speed="1"
+      style="width: 180px; height: 180px;"
+      loop
+      autoplay
+    ></lottie-player>
+  </div>
+
+  <!-- Lottie Script -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <script>
+    const chatbox = document.getElementById('chatbox');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-input');
+
+    function addMessage(role, text) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.textContent = text;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      if (role === 'assistant') {
+        document.dispatchEvent(new Event('message:received'));
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage('user', text);
+      input.value = '';
+
+      document.dispatchEvent(new Event('message:sent'));
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: [{ role: 'user', content: text }] })
+        });
+        const data = await res.json();
+        addMessage('assistant', data.reply || '(no reply)');
+      } catch (err) {
+        addMessage('assistant', 'Error: ' + err);
+      }
+    });
+  </script>
+
+  <!-- 🌟 GSAP for peeking motion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    const peekingDog = document.querySelector('.mascot-right');
+    document.addEventListener('message:received', () => {
+      gsap.fromTo(
+        peekingDog,
+        { x: 100 },
+        { x: 0, duration: 0.8, ease: "elastic.out(1, 0.6)" }
+      );
+    });
+  </script>
+
+  <style>
+    .mascot {
+      position: fixed;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .mascot-right {
+      top: 45%;
+      right: 0;
+      transform: translateY(-50%);
+    }
+  </style>
 {% endblock %}
-
-
-

@@ -129,3 +129,30 @@
 		/* eyes peeking downward */ radial-gradient(4px 4px at 46px 68px, #2d2d2d 0%, #2d2d2d 100%),
 		radial-gradient(4px 4px at 74px 68px, #2d2d2d 0%, #2d2d2d 100%);
 	background-repeat:no-repeat}
+
+/* ===== Mascot styles ===== */
+.mascot-wrap {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 130px;         /* change to scale larger/smaller */
+  height: auto;
+  z-index: 9999;
+  pointer-events: none; /* clicks go through to chat; change to 'auto' if you want clicks */
+  -webkit-tap-highlight-color: transparent;
+}
+
+#mascot {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.12));
+  transform-origin: 80% 80%; /* tail area pivot (tweak if needed) */
+  will-change: transform;
+}
+
+/* mobile tweaks */
+@media (max-width: 700px) {
+  .mascot-wrap { width: 90px; bottom: 10px; left: 12px; }
+}

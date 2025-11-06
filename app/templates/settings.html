@@ -1,15 +1,163 @@
 {% extends "base.html" %}
 {% block content %}
-	<h1>Settings</h1>
-	<p>Preferences will be available soon. You will set:
-		<ul>
-			<li>Hydration reminders</li>
-			<li>Medicine reminders and times</li>
-			<li>Notification channel</li>
-		</ul>
-	</p>
+<h1>Hydration & Medicine Reminders</h1>
+
+<!-- Hydration Tracker -->
+<section id="hydration-section">
+  <h2>💧 Hydration Tracker</h2>
+  <p>Water count today: <span id="waterCount">0</span> glasses</p>
+  <button onclick="addWater()">+ Add Glass</button>
+  <button onclick="resetWater()">Reset</button>
+</section>
+<hr>
+
+<!-- Medicine Reminder -->
+<section id="medicine-section">
+  <h2>💊 Medicine Reminder</h2>
+  <p>Notification status: <span id="notificationStatus"></span></p>
+  
+  <form id="medicineForm">
+    <input type="text" id="medicineName" placeholder="Medicine name" required>
+    <input type="time" id="medicineTime" required>
+    <button type="submit">Set Reminder</button>
+  </form>
+  
+  <ul id="medicineList"></ul>
+</section>
+
+<script>
+// Check notification permission status
+function checkNotificationStatus() {
+  const status = document.getElementById('notificationStatus');
+  if (!("Notification" in window)) {
+    status.textContent = "❌ Not supported in this browser";
+    status.style.color = "red";
+  } else {
+    status.textContent = `${Notification.permission}`;
+    if (Notification.permission === "granted") {
+      status.style.color = "green";
+    } else if (Notification.permission === "denied") {
+      status.style.color = "red";
+    } else {
+      status.style.color = "orange";
+    }
+  }
+}
+checkNotificationStatus();
+
+// Request notification permission
+if ("Notification" in window && Notification.permission === "default") {
+  Notification.requestPermission().then(permission => {
+    checkNotificationStatus();
+  });
+}
+
+// Hydration Tracker
+let waterCount = localStorage.getItem('waterCount') || 0;
+document.getElementById('waterCount').textContent = waterCount;
+
+function addWater() {
+  waterCount++;
+  localStorage.setItem('waterCount', waterCount);
+  document.getElementById('waterCount').textContent = waterCount;
+}
+
+function resetWater() {
+  waterCount = 0;
+  localStorage.setItem('waterCount', waterCount);
+  document.getElementById('waterCount').textContent = waterCount;
+}
+
+// Medicine Reminder
+document.getElementById('medicineForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('medicineName').value.trim();
+  const time = document.getElementById('medicineTime').value;
+  
+  if (name && time) {
+    const reminder = { name, time };
+    let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+    reminders.push(reminder);
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    displayReminders();
+  }
+  this.reset();
+});
+
+function displayReminders() {
+  const list = document.getElementById('medicineList');
+  list.innerHTML = '';
+  const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+  reminders.forEach((r, i) => {
+    const li = document.createElement('li');
+    li.textContent = `${r.name} - ${r.time}`;
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '❌';
+    delBtn.onclick = () => deleteReminder(i);
+    li.appendChild(delBtn);
+    list.appendChild(li);
+  });
+}
+
+function deleteReminder(i) {
+  let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+  reminders.splice(i, 1);
+  localStorage.setItem('reminders', JSON.stringify(reminders));
+  displayReminders();
+}
+
+// Track which medicines have been notified today
+let notifiedMedicines = new Set();
+
+// Check reminders every 10 seconds (for testing)
+setInterval(() => {
+  const now = new Date();
+  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+  
+  reminders.forEach(r => {
+    const key = `${r.name}-${r.time}-${now.toDateString()}`;
+    if (r.time === currentTime && !notifiedMedicines.has(key)) {
+      notifyUser(r.name);
+      notifiedMedicines.add(key);
+    }
+  });
+}, 10000); // Checking every 10 seconds so you don't have to wait long
+
+function notifyUser(medicine) {
+  if (!("Notification" in window)) {
+    alert(`💊 Time to take your ${medicine}!`);
+    return;
+  }
+  
+  if (Notification.permission === "granted") {
+    try {
+      new Notification("💊 Medicine Reminder", {
+        body: `Time to take your ${medicine}!`,
+        icon: "💊",
+        requireInteraction: true
+      });
+      // Also show alert as backup
+      alert(`💊 Time to take your ${medicine}!`);
+    } catch (error) {
+      alert(`💊 Time to take your ${medicine}!`);
+    }
+  } else if (Notification.permission === "denied") {
+    alert(`💊 Time to take your ${medicine}!`);
+  } else {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        new Notification("💊 Medicine Reminder", {
+          body: `Time to take your ${medicine}!`,
+          icon: "💊"
+        });
+      }
+      alert(`💊 Time to take your ${medicine}!`);
+    });
+  }
+}
+
+// Show saved reminders on page load
+displayReminders();
+</script>
 {% endblock %}
-
-
-
-

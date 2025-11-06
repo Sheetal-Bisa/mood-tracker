@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wellness Nudges - MoodMate</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffeef8 0%, #e0f4ff 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #e91e63;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+    
+    .status-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .status-item:last-child {
+      border-bottom: none;
+    }
+    
+    .status-label {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .status-value {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+    
+    .status-enabled {
+      background: #4caf50;
+      color: white;
+    }
+    
+    .status-disabled {
+      background: #f44336;
+      color: white;
+    }
+    
+    .status-pending {
+      background: #ff9800;
+      color: white;
+    }
+    
+    .nudge-schedule {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .nudge-schedule h2 {
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+    
+    .nudge-time {
+      background: rgba(255,255,255,0.2);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nudge-time:last-child {
+      margin-bottom: 0;
+    }
+    
+    .time-header {
+      font-size: 1.3em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .time-description {
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    
+    .enable-btn {
+      background: #e91e63;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1em;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .enable-btn:hover {
+      background: #c2185b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+    }
+    
+    .enable-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .info-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      color: #856404;
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #e91e63;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .back-link:hover {
+      transform: translateX(-5px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← Back to Home</a>
+    
+    <h1>🌟 Wellness Nudges</h1>
+    <p class="subtitle">Get gentle reminders throughout the day to check in with yourself</p>
+    
+    <div class="status-section">
+      <div class="status-item">
+        <span class="status-label">Browser Support:</span>
+        <span id="browserStatus" class="status-value">Checking...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Notification Permission:</span>
+        <span id="permissionStatus" class="status-value">Checking...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Wellness Nudges:</span>
+        <span id="nudgesStatus" class="status-value">Checking...</span>
+      </div>
+    </div>
+    
+    <div class="nudge-schedule">
+      <h2>📅 Daily Wellness Schedule</h2>
+      
+      <div class="nudge-time">
+        <div class="time-header">
+          🌅 <strong>6:00 AM</strong> - Morning Smile
+        </div>
+        <div class="time-description">
+          Start your day with a funny joke to make you smile! Plus a reminder to drink water and have a great day.
+        </div>
+      </div>
+      
+      <div class="nudge-time">
+        <div class="time-header">
+          🍽️ <strong>1:00 PM</strong> - Afternoon Check-in
+        </div>
+        <div class="time-description">
+          A gentle reminder to check if you've had lunch and see how you're doing.
+        </div>
+      </div>
+      
+      <div class="nudge-time">
+        <div class="time-header">
+          🌙 <strong>9:00 PM</strong> - Evening Reflection
+        </div>
+        <div class="time-description">
+          Time to reflect on your day! Check in about dinner and how your day went.
+        </div>
+      </div>
+    </div>
+    
+    <button id="enableBtn" class="enable-btn">Enable Wellness Nudges</button>
+    
+    <div class="info-box">
+      <strong>💡 Tip:</strong> Keep this tab open in the background or enable notifications to receive your wellness nudges throughout the day!
+    </div>
+  </div>
+
+  <script>
+    const jokes = [
+      "Why don't scientists trust atoms? Because they make up everything! 😄",
+      "What do you call a fake noodle? An impasta! 🍝",
+      "Why did the scarecrow win an award? He was outstanding in his field! 🌾",
+      "What do you call a bear with no teeth? A gummy bear! 🐻",
+      "Why don't eggs tell jokes? They'd crack each other up! 🥚",
+      "What did the ocean say to the beach? Nothing, it just waved! 🌊",
+      "Why did the coffee file a police report? It got mugged! ☕",
+      "What's orange and sounds like a parrot? A carrot! 🥕",
+      "Why don't skeletons fight each other? They don't have the guts! 💀",
+      "What did one wall say to the other? I'll meet you at the corner! 🏠",
+      "Why did the bicycle fall over? It was two-tired! 🚲",
+      "What do you call cheese that isn't yours? Nacho cheese! 🧀",
+      "Why couldn't the leopard play hide and seek? Because he was always spotted! 🐆",
+      "What did the grape say when it got stepped on? Nothing, it just let out a little wine! 🍇",
+      "Why did the golfer bring two pairs of pants? In case he got a hole in one! ⛳"
+    ];
+
+    function getDailyJoke() {
+      const today = new Date().toDateString();
+      const stored = localStorage.getItem('wellnessJoke');
+      const storedDate = localStorage.getItem('wellnessJokeDate');
+      
+      if (storedDate === today && stored) {
+        return stored;
+      }
+      
+      const joke = jokes[Math.floor(Math.random() * jokes.length)];
+      localStorage.setItem('wellnessJoke', joke);
+      localStorage.setItem('wellnessJokeDate', today);
+      return joke;
+    }
+
+    function checkBrowserSupport() {
+      const browserStatus = document.getElementById('browserStatus');
+      if (!("Notification" in window)) {
+        browserStatus.textContent = "Not Supported";
+        browserStatus.className = "status-value status-disabled";
+        return false;
+      }
+      browserStatus.textContent = "Supported";
+      browserStatus.className = "status-value status-enabled";
+      return true;
+    }
+
+    function updatePermissionStatus() {
+      const permissionStatus = document.getElementById('permissionStatus');
+      const permission = Notification.permission;
+      
+      if (permission === "granted") {
+        permissionStatus.textContent = "Granted";
+        permissionStatus.className = "status-value status-enabled";
+      } else if (permission === "denied") {
+        permissionStatus.textContent = "Denied";
+        permissionStatus.className = "status-value status-disabled";
+      } else {
+        permissionStatus.textContent = "Not Yet";
+        permissionStatus.className = "status-value status-pending";
+      }
+      
+      updateNudgesStatus();
+    }
+
+    function updateNudgesStatus() {
+      const nudgesStatus = document.getElementById('nudgesStatus');
+      const enableBtn = document.getElementById('enableBtn');
+      const isEnabled = localStorage.getItem('wellnessNudgesEnabled') === 'true';
+      
+      if (Notification.permission === "granted" && isEnabled) {
+        nudgesStatus.textContent = "Active";
+        nudgesStatus.className = "status-value status-enabled";
+        enableBtn.textContent = "Wellness Nudges Enabled ✓";
+        enableBtn.disabled = true;
+      } else if (Notification.permission === "denied") {
+        nudgesStatus.textContent = "Blocked";
+        nudgesStatus.className = "status-value status-disabled";
+        enableBtn.textContent = "Cannot Enable (Permission Denied)";
+        enableBtn.disabled = true;
+      } else {
+        nudgesStatus.textContent = "Inactive";
+        nudgesStatus.className = "status-value status-disabled";
+        enableBtn.textContent = "Enable Wellness Nudges";
+        enableBtn.disabled = false;
+      }
+    }
+
+    document.getElementById('enableBtn').addEventListener('click', async function() {
+      if (!("Notification" in window)) {
+        alert("Your browser doesn't support notifications 😔");
+        return;
+      }
+
+      if (Notification.permission === "denied") {
+        alert("Notifications are blocked. Please enable them in your browser settings.");
+        return;
+      }
+
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          localStorage.setItem('wellnessNudgesEnabled', 'true');
+          new Notification("🌟 Wellness Nudges Enabled!", {
+            body: "You'll receive gentle check-ins throughout the day.",
+            icon: "🌟"
+          });
+          updatePermissionStatus();
+        }
+      } catch (error) {
+        console.error("Error requesting permission:", error);
+      }
+    });
+
+    let notifiedTimes = {};
+
+    const wellnessNudges = [
+      {
+        time: "06:00",
+        title: "🌅 Good Morning!",
+        getMessage: () => {
+          const joke = getDailyJoke();
+          return `${joke}\n\nHope you have a wonderful day ahead! Don't forget to drink some water 💧`;
+        }
+      },
+      {
+        time: "13:00",
+        title: "🍽️ Afternoon Check-in",
+        getMessage: () => "Have you had your lunch yet? How are you doing now? 😊"
+      },
+      {
+        time: "21:00",
+        title: "🌙 Evening Check-in",
+        getMessage: () => "Did you have dinner? How was your day today? 💭"
+      }
+    ];
+
+    function checkWellnessNudges() {
+      const isEnabled = localStorage.getItem('wellnessNudgesEnabled') === 'true';
+      if (!isEnabled || Notification.permission !== "granted") return;
+
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const today = now.toDateString();
+
+      wellnessNudges.forEach((nudge, index) => {
+        const key = `${index}-${today}`;
+        if (nudge.time === currentTime && !notifiedTimes[key]) {
+          try {
+            new Notification(nudge.title, {
+              body: nudge.getMessage(),
+              requireInteraction: true
+            });
+            notifiedTimes[key] = true;
+          } catch (error) {
+            console.error("Notification error:", error);
+          }
+        }
+      });
+    }
+
+    setInterval(checkWellnessNudges, 30000);
+
+    checkBrowserSupport();
+    updatePermissionStatus();
+  </script>
+</body>
+</html>
